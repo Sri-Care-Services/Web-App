@@ -4,6 +4,7 @@ import Footer from "./components/Footer";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Billing from "./components/Billing";
 import ImageFF from './assets/sricare.png'; 
+import Notifications from "./components/Notification";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<HeroSection />} />
             <Route path="/billing" element={<Billing />} />
+            <Route path="/Notifications" element={<Notifications />} />
           </Routes>
         </div>
         <Footer />

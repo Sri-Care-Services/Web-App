@@ -27,23 +27,23 @@ const Billing = () => {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 mb-4 mt-[-60px]">
-      <button 
+      <button
         onClick={handleBack}
         className="absolute top-4 left-9 flex items-center text-orange-500 mt-[24px]"
         style={{ padding: '10px' }}
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          className="h-6 w-6" 
-          fill="none" 
-          viewBox="0 0 24 24" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
           stroke="currentColor"
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth={2} 
-            d="M15 19l-7-7 7-7" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
           />
         </svg>
         <span className="ml-2">Back</span>
@@ -63,33 +63,31 @@ const Billing = () => {
         <form onSubmit={handlePayment} className="mt-0">
           <div className="mb-4">
             <label className="block text-gray-600 font-medium mb-2">Card Type:</label>
-            <div className="flex space-x-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  value="Visa"
-                  checked={cardType === 'Visa'}
-                  onChange={(e) => setCardType(e.target.value)}
-                  className="hidden"
-                />
-                <div className={`flex items-center border rounded-lg p-2 ${cardType === 'Visa' ? 'border-orange-500' : 'border-gray-300'} transition`}>
-                  <img src="/path/to/visa-icon.png" alt="Visa" className="h-6 w-6 mr-2" />
+            
+            <div className="border-dashed border-2 border-orange-300 rounded-lg p-4">
+              <div className="flex flex-col space-y-4">
+                <label className="flex items-center space-x-4">
+                  <input
+                    type="radio"
+                    value="Visa"
+                    checked={cardType === 'Visa'}
+                    onChange={(e) => setCardType(e.target.value)}
+                    className="form-radio h-5 w-5 text-orange-500"
+                  />
                   <span className="text-gray-700">Visa</span>
-                </div>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  value="MasterCard"
-                  checked={cardType === 'MasterCard'}
-                  onChange={(e) => setCardType(e.target.value)}
-                  className="hidden"
-                />
-                <div className={`flex items-center border rounded-lg p-2 ${cardType === 'MasterCard' ? 'border-orange-500' : 'border-gray-300'} transition`}>
-                  <img src="/path/to/mastercard-icon.png" alt="MasterCard" className="h-6 w-6 mr-2" />
+                </label>
+
+                <label className="flex items-center space-x-4">
+                  <input
+                    type="radio"
+                    value="MasterCard"
+                    checked={cardType === 'MasterCard'}
+                    onChange={(e) => setCardType(e.target.value)}
+                    className="form-radio h-5 w-5 text-orange-500"
+                  />
                   <span className="text-gray-700">MasterCard</span>
-                </div>
-              </label>
+                </label>
+              </div>
             </div>
           </div>
 
