@@ -66,16 +66,17 @@ const HeroSection = () => {
   // getAllPackages();
 
     //get all package
-    // const getAllPackages = () => {
-      // getAllPackage
-      //     .then((response) => {
-      //         setPackages(response.data); 
-      //     })
-      //     .catch((error) => {
-      //         console.log(error);
-      //     });
+  //   const getAllPackages = () => {
+  //     getAllPackage
+  //         .then((response) => {
+  //             setPackages(response.data); 
+  //         })
+  //         .catch((error) => {
+  //             console.log(error);
+  //         });
   //      setPackages(pack)
   // };
+  // getAllPackages();
 
   const handleSend = ()=>{
      setCurrentMessage(message);

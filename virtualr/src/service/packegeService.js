@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 export const getAllPackage =[
     {
         "id": 2,
@@ -60,7 +62,7 @@ export const getAllPackage =[
         "_active": true
     }
 ];
-
+// const BASE_URL = "";
 // export const createPackage = (data) => axios.post(BASE_URL+"/api/", data);
-// export const getAllPackage = () => axios.get(BASE_URL+"/api/");
+// export const getAllPackage = () => axios.get("localhost:5000/getAllPackages");
 
