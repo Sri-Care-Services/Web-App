@@ -60,3 +60,7 @@ export const getAllPackage =[
         "_active": true
     }
 ];
+
+// export const createPackage = (data) => axios.post(BASE_URL+"/api/", data);
+// export const getAllPackage = () => axios.get(BASE_URL+"/api/");
+

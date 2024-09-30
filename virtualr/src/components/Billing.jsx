@@ -11,9 +11,45 @@ const Billing = () => {
 
   const [cardType, setCardType] = useState('Visa');
 
+  const validation = () => {
+    if (cardNo.length !== 16 || isNaN(cardNo)) {
+      alert('Invalid Card Number. It must be exactly 16 digits.');
+      return false;
+    }
+
+    const exDatePattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!exDatePattern.test(exDate)) {
+      alert('Invalid Expiration Date. Use MM/YY format .');
+      return false;
+    }
+  
+    if (cvv.length !== 3 || isNaN(cvv)) {
+      alert('Invalid CVV. It must be exactly 3 digits.');
+      return false;
+    }
+  
+    return true;
+  };
+
   const handlePayment = (e) => {
     e.preventDefault();
-    alert(`Activating ${packageDetails?.title}. Payment processed successfully!`);
+    if (validation()) {
+      const data={
+        "cardNo":cardNo,
+        "exDate":exDate,
+        "cvv":cvv
+      }
+      // createPackage(data)
+      // .then((response) => {
+      //   console.log(response.data);
+      // })
+      // .catch((error) => {
+      //   console.error(error);
+      // });
+      alert(`Activating ${packageDetails?.title}. Payment processed successfully! ${data}`);
+      console.log(data)
+    }
+    
   };
 
   const handleBack = () => {
@@ -102,8 +138,9 @@ const Billing = () => {
             </label>
             <input
               id="cardNumber"
-              type="text"
+              type="number"
               placeholder="Card Number"
+              onChange={(e)=>setCardNo(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
@@ -116,6 +153,7 @@ const Billing = () => {
               id="expiryDate"
               type="text"
               placeholder="MM/YY"
+              onChange={(e)=>setExDate(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
@@ -126,8 +164,9 @@ const Billing = () => {
             </label>
             <input
               id="cvv"
-              type="text"
+              type="number"
               placeholder="CVV"
+              onChange={(e)=>setCvv(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
