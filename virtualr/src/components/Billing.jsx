@@ -46,8 +46,27 @@ const Billing = () => {
       // .catch((error) => {
       //   console.error(error);
       // });
-      alert(`Activating ${packageDetails?.title}. Payment processed successfully! ${data}`);
-      console.log(data)
+      const formData = new URLSearchParams();
+formData.append('userId', '1');
+formData.append('packageId', '2');
+
+fetch('http://localhost:5000/activatePackage/4', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  body: formData.toString()
+})
+  .then(response => response.json())
+  .then(data => {
+    alert("Success");
+  })
+  .catch(error => {
+    alert('Error:', response.error);
+  });
+      // alert(`Activating ${packageDetails?.title}. Payment processed successfully! ${data}`);
+      alert("Success");
+      handleBack();
     }
     
   };
