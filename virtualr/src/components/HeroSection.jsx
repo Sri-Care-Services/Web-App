@@ -1,61 +1,79 @@
 import { useState } from "react";
 import Image01 from '../assets/01.png';
 import { useNavigate } from "react-router-dom";
+import { getAllPackage } from "../service/packegeService";
 
-const packages = [
-  {
-    id: 1,
-    title: "Social Media Unlimited",
-    price: "899 Rs",
-    data: "1 GB",
-    apps: "Facebook, WhatsApp, Instagram",
-    icon: "📱",
-  },
-  {
-    id: 2,
-    title: "Streaming Package",
-    price: "1299 Rs",
-    data: "2 GB",
-    apps: "YouTube, Netflix, Disney+",
-    icon: "🎥",
-  },
-  {
-    id: 3,
-    title: "Gaming Package",
-    price: "1499 Rs",
-    data: "3 GB",
-    apps: "PUBG, Fortnite, Call of Duty",
-    icon: "🎮",
-  },
-  {
-    id: 4,
-    title: "Business Package",
-    price: "1999 Rs",
-    data: "5 GB",
-    apps: "Email, Zoom, Google Drive",
-    icon: "💼",
-  },
-  {
-    id: 5,
-    title: "Family Package",
-    price: "1599 Rs",
-    data: "4 GB",
-    apps: "Facebook, WhatsApp, Instagram, YouTube",
-    icon: "👨‍👩‍👧‍👦",
-  },
-  {
-    id: 6,
-    title: "Unlimited Package",
-    price: "2999 Rs",
-    data: "Unlimited",
-    apps: "All apps",
-    icon: "🌐",
-  },
-];
+// --------------------------for testing---------------
+// const pack= [
+//   {
+//     id: 1,
+//     title: "Social Media Unlimited",
+//     price: "899 Rs",
+//     data: "1 GB",
+//     apps: "Facebook, WhatsApp, Instagram",
+//     icon: "📱",
+//   },
+//   {
+//     id: 2,
+//     title: "Streaming Package",
+//     price: "1299 Rs",
+//     data: "2 GB",
+//     apps: "YouTube, Netflix, Disney+",
+//     icon: "🎥",
+//   },
+//   {
+//     id: 3,
+//     title: "Gaming Package",
+//     price: "1499 Rs",
+//     data: "3 GB",
+//     apps: "PUBG, Fortnite, Call of Duty",
+//     icon: "🎮",
+//   },
+//   {
+//     id: 4,
+//     title: "Business Package",
+//     price: "1999 Rs",
+//     data: "5 GB",
+//     apps: "Email, Zoom, Google Drive",
+//     icon: "💼",
+//   },
+//   {
+//     id: 5,
+//     title: "Family Package",
+//     price: "1599 Rs",
+//     data: "4 GB",
+//     apps: "Facebook, WhatsApp, Instagram, YouTube",
+//     icon: "👨‍👩‍👧‍👦",
+//   },
+//   {
+//     id: 6,
+//     title: "Unlimited Package",
+//     price: "2999 Rs",
+//     data: "Unlimited",
+//     apps: "All apps",
+//     icon: "🌐",
+//   },
+// ];
 
 const HeroSection = () => {
   const navigate = useNavigate();
   const [isChatOpen, setChatOpen] = useState(false);
+  const [packages,setPackages] =useState(getAllPackage);
+
+  // getAllPackages();
+
+    //get all package
+    // const getAllPackages = () => {
+      // getAllPackage
+      //     .then((response) => {
+      //         setPackages(response.data); 
+      //     })
+      //     .catch((error) => {
+      //         console.log(error);
+      //     });
+  //      setPackages(pack)
+  // };
+
 
   const handleNavigate = (page, packageDetails) => {
     navigate(`/${page}`, { state: { packageDetails } });
@@ -64,6 +82,7 @@ const HeroSection = () => {
   const toggleChat = () => {
     setChatOpen(!isChatOpen);
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center mt-4 mb-8 px-4 lg:px-20">
@@ -81,11 +100,37 @@ const HeroSection = () => {
             className="bg-neutral-800 rounded-lg p-6 flex flex-col justify-between transition-transform transform hover:scale-105"
           >
             <div className="flex flex-col items-center text-center flex-grow">
-              <span className="text-4xl mb-2">{pkg.icon}</span>
-              <h3 className="text-lg font-semibold text-white mb-2">{pkg.title}</h3>
-              <p className="text-xl font-bold text-orange-500">{pkg.price}</p>
-              <p className="text-gray-400">Data: {pkg.data}</p>
-              <p className="text-gray-400">Includes: {pkg.apps}</p>
+              
+                {pkg.name == "Social Media Unlimited" ?(
+                    <span className="text-4xl mb-2">
+                        📱
+                    </span>
+                ):pkg.name == "Streaming Package" ?(
+                  <span className="text-4xl mb-2">
+                      🎥
+                  </span>
+                ):pkg.name == "Gaming Package" ?(
+                    <span className="text-4xl mb-2">
+                      🎮
+                  </span>
+                ):pkg.name == "Business Package" ?(
+                      <span className="text-4xl mb-2">
+                      💼
+                    </span>
+                ):pkg.name == "Family Package" ?(
+                  <span className="text-4xl mb-2">
+                      👨‍👩‍👧‍👦
+                  </span>
+                ):(
+                  <span className="text-4xl mb-2">
+                      🌐
+                  </span>
+                )}
+            
+              <h3 className="text-lg font-semibold text-white mb-2">{pkg.name}</h3>
+              <p className="text-xl font-bold text-orange-500">Rs.{pkg.price}/-</p>
+              <p className="text-gray-400">Data: {pkg.description}</p>
+              {/* <p className="text-gray-400">Includes: {pkg.description}</p> */}
             </div>
             <button
               className="mt-4 py-2 px-4 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition"

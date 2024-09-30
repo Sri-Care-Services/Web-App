@@ -5,6 +5,9 @@ const Billing = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const packageDetails = location.state?.packageDetails;
+  const [cardNo,setCardNo]=useState(null);
+  const [exDate,setExDate]=useState('');
+  const [cvv,setCvv]=useState(null)
 
   const [cardType, setCardType] = useState('Visa');
 
