@@ -2,6 +2,7 @@ import { useState } from "react";
 import Image01 from '../assets/01.png';
 import { useNavigate } from "react-router-dom";
 import { getAllPackage } from "../service/packegeService";
+import { IoMdSend } from "react-icons/io";
 
 // --------------------------for testing---------------
 // const pack= [
@@ -59,6 +60,8 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const [isChatOpen, setChatOpen] = useState(false);
   const [packages,setPackages] =useState(getAllPackage);
+  const [message,setMessage]=useState('');
+  const [currentMessage,setCurrentMessage]=useState('');
 
   // getAllPackages();
 
@@ -74,6 +77,13 @@ const HeroSection = () => {
   //      setPackages(pack)
   // };
 
+  const handleSend = ()=>{
+     setCurrentMessage(message);
+     setMessage('')
+    // const data={
+
+    // }
+  }
 
   const handleNavigate = (page, packageDetails) => {
     navigate(`/${page}`, { state: { packageDetails } });
@@ -162,12 +172,20 @@ const HeroSection = () => {
           <h3 className="font-bold mb-2">Chat with us</h3>
           <div className="h-48 overflow-y-auto border border-gray-300 rounded-lg p-2 mb-2">
             <p>SRI care: Hello! How can we help you?</p>
+            {currentMessage != '' && (<p>Me: {currentMessage}</p>)}
           </div>
-          <input
-            type="text"
-            placeholder="Type your message..."
-            className="border border-gray-300 rounded-lg p-2 w-full"
-          />
+          <div style={{position:'relative'}}>
+              <input
+                type="text"
+                placeholder="Type your message..."
+                className="border border-gray-300 rounded-lg p-2 w-full"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+              <div style={{position:'absolute',right:"1.5vh",bottom:'1.4vh',fontSize:"2.5vh", cursor:'pointer'}} onClick={handleSend}>
+                <IoMdSend />
+              </div>
+            </div>
         </div>
       )}
     </div>
