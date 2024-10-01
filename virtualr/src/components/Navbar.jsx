@@ -1,4 +1,15 @@
-import { Home, Package, User, LogOut, DollarSign, Bell, Settings, X, LogIn, UserPlus } from "lucide-react";
+import {
+  Home,
+  Package,
+  User,
+  LogOut,
+  DollarSign,
+  Bell,
+  Settings,
+  X,
+  LogIn,
+  UserPlus,
+} from "lucide-react";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
@@ -9,7 +20,7 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
   const handleLinkClick = (link) => {
     console.log(link);
     setActiveLink(link);
-    console.log(weblocation.pathname.split('/')[1]);
+    console.log(weblocation.pathname.split("/")[1]);
     if (link === "package") {
       window.location.href = "./";
     } else {
@@ -17,15 +28,18 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
     }
   };
 
-  // Function to handle login
-  
-
   return (
     <div className="fixed top-0 left-0 right-0 mb-0 flex items-center justify-between bg-neutral-900 p-5 rounded-b-lg border border-neutral-700/80 max-w-3xl mx-auto z-50">
       <div className="flex space-x-5">
         <a
-          className={`flex items-center text-sm ${activeLink === 'package' || weblocation.pathname.split('/')[1] === 'package' || weblocation.pathname.split('/')[1] === '' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 cursor-pointer`}
-          onClick={() => handleLinkClick('package')}
+          className={`flex items-center text-sm ${
+            activeLink === "package" ||
+            weblocation.pathname.split("/")[1] === "package" ||
+            weblocation.pathname.split("/")[1] === ""
+              ? "text-orange-500"
+              : "text-white"
+          } hover:text-orange-500 cursor-pointer`}
+          onClick={() => handleLinkClick("package")}
         >
           <Package className="mr-1" />
           <span>Package</span>
@@ -39,25 +53,38 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
         </a> */}
 
         <a
-          className={`flex items-center text-sm ${activeLink === 'Notifications' || weblocation.pathname.split('/')[1] === 'Notifications' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 cursor-pointer`}
-          onClick={() => handleLinkClick('Notifications')}
+          className={`flex items-center text-sm ${
+            activeLink === "Notifications" ||
+            weblocation.pathname.split("/")[1] === "Notifications"
+              ? "text-orange-500"
+              : "text-white"
+          } hover:text-orange-500 cursor-pointer`}
+          onClick={() => handleLinkClick("Notifications")}
         >
           <Bell className="mr-1" />
           <span>Notifications</span>
         </a>
         <a
-          className={`flex items-center text-sm ${activeLink === 'settings' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 cursor-pointer`}
-          onClick={() => handleLinkClick('settings')}
+          className={`flex items-center text-sm ${
+            activeLink === "settings" ? "text-orange-500" : "text-white"
+          } hover:text-orange-500 cursor-pointer`}
+          onClick={() => handleLinkClick("settings")}
         >
           <Settings className="mr-1" />
           <span>Settings</span>
         </a>
       </div>
       <div className="flex space-x-4">
-        <button onClick={onLoginClick} className="flex items-center text-orange-500 text-sm cursor-pointer">
+        <button
+          onClick={onLoginClick}
+          className="flex items-center text-orange-500 text-sm cursor-pointer"
+        >
           <LogIn className="mr-1" />
         </button>
-        <button onClick={onSignUpClick} className="flex items-center text-orange-500 text-sm cursor-pointer">
+        <button
+          onClick={onSignUpClick}
+          className="flex items-center text-orange-500 text-sm cursor-pointer"
+        >
           <UserPlus className="mr-1" />
         </button>
       </div>
@@ -66,129 +93,223 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
 };
 
 const LoginForm = ({ onClose, onSignUpClick }) => {
-  const login = async (email, password) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
-        const response = await fetch("localhost:5000/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              
-                email: "string",
-              password: "string"
-            }),
-        });
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const data = await response.json();
-        alert(data);
-        if (response.ok) {
-            // Store the JWT token in AsyncStorage
-            // await AsyncStorage.setItem('token', data.token);
-            return { success: true};
-        } else {
-            return { success: false || 'Login failed' };
-        }
+      if (!response.ok) {
+        const { message } = await response.json();
+        setError(message || "Login failed. Please check your credentials.");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Login successful:", data);
+
+      const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
+      const userId = decodedToken.userId;
+      console.log("User ID:", userId);
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("userId", userId);
+
+      onClose();
     } catch (error) {
-        return { success: false, message: 'An error occurred. Please try again later.' };
+      console.error("Error logging in:", error);
+      setError("An error occurred. Please try again.");
     }
-};
+  };
 
-  const handleLogin = async () => {
-    var email = "string";
-    var password = "string";
-    // setLoading(true);
-    const result = await login(email, password);
-    // setLoading(false);
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <h2 className="text-xl font-bold mb-4">Login</h2>
 
-    if (result.success) {
-        alert('Login Successful', 'You have been logged in successfully!');
-        // navigation.navigate('HomeScreen'); 
-        // window.location.href += "./";
-    } else {
-        alert('Login Failed', result.message || 'Invalid credentials. Please try again.');
-        }
-    };
-  return(
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
-      <button onClick={onClose} className="absolute top-2 right-2 text-gray-500">
-        <X className="w-5 h-5" />
-      </button>
-      <h2 className="text-xl font-bold mb-4">Login</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-       
-      />
-      <button onClick={handleLogin} className="bg-orange-500 text-white rounded-md py-2 w-full hover:bg-orange-600 transition">
-        Login
-      </button>
-      <p className="text-center text-orange-500 mt-4 cursor-pointer hover:underline" onClick={onSignUpClick}>
-        Sign Up
-      </p>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+
+        <form onSubmit={handleLogin}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+          <button
+            type="submit"
+            className="bg-orange-500 text-white rounded-md py-2 w-full hover:bg-orange-600 transition"
+          >
+            Login
+          </button>
+        </form>
+
+        <p
+          className="text-center text-orange-500 mt-4 cursor-pointer hover:underline"
+          onClick={onSignUpClick}
+        >
+          Sign Up
+        </p>
+      </div>
     </div>
-  </div>
   );
 };
-const SignUpForm = ({ onClose }) => (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
-      <button onClick={onClose} className="absolute top-2 right-2 text-gray-500">
-        <X className="w-5 h-5" />
-      </button>
-      <h2 className="text-xl font-bold mb-4">Sign Up</h2>
 
-      <input
-        type="text"
-        placeholder="Name"
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-      />
+const SignUpForm = ({ onClose }) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [city, setCity] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-      <input
-        type="email"
-        placeholder="Email"
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-      />
+  const handleSignUp = async (e) => {
+    e.preventDefault();
 
-      <select
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-        defaultValue=""
-      >
-        <option value="" disabled>Select your City</option>
-        <option value="Colombo">Colombo</option>
-        <option value="Kandy">Kandy</option>
-        <option value="Galle">Galle</option>
-        <option value="Jaffna">Jaffna</option>
-        <option value="Trincomalee">Trincomalee</option>
-        <option value="Batticaloa">Batticaloa</option>
-        <option value="Negombo">Negombo</option>
-      </select>
+    if (!name || !email || !city || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
 
-      <input
-        type="hidden"
-        value="Student"
-      />
+    const payload = {
+      name,
+      email,
+      city,
+      role: "CUSTOMER",
+      password,
+      phoneNumber,
+    };
 
-      <input
-        type="password"
-        placeholder="Password"
-        className="border border-gray-300 rounded-lg p-2 w-full mb-4"
-      />
+    try {
+      const response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-      <button className="bg-orange-500 text-white rounded-md py-2 w-full hover:bg-orange-600 transition">
-        Sign Up
-      </button>
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Sign up failed. Please try again.");
+        return;
+      }
+
+      setSuccess("Sign up successful!");
+      setError("");
+      console.log("Registration successful:", data);
+
+      onClose();
+    } catch (error) {
+      console.error("Error signing up:", error);
+      setError("An error occurred. Please try again.");
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white rounded-lg p-6 w-80 shadow-lg relative">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-gray-500"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <h2 className="text-xl font-bold mb-4">Sign Up</h2>
+
+        {error && <p className="text-red-500 mb-4">{error}</p>}
+        {success && <p className="text-green-500 mb-4">{success}</p>}
+
+        <form onSubmit={handleSignUp}>
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+
+          <select
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+          >
+            <option value="" disabled>
+              Select your City
+            </option>
+            <option value="Colombo">Colombo</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Galle">Galle</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Negombo">Negombo</option>
+          </select>
+
+          <input type="hidden" value="Student" />
+
+          <input
+            type="text"
+            placeholder="Phone Number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="border border-gray-300 rounded-lg p-2 w-full mb-4"
+          />
+
+          <button
+            type="submit"
+            className="bg-orange-500 text-white rounded-md py-2 w-full hover:bg-orange-600 transition"
+          >
+            Sign Up
+          </button>
+        </form>
+      </div>
     </div>
-  </div>
-);
-
+  );
+};
 
 const Layout = () => {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -207,11 +328,11 @@ const Layout = () => {
   return (
     <div>
       <HeaderNav onLoginClick={toggleLogin} onSignUpClick={toggleSignUp} />
-      <main className="p-6">
+      <main className="p-6"></main>
 
-      </main>
-
-      {isLoginOpen && <LoginForm onClose={toggleLogin} onSignUpClick={toggleSignUp} />}
+      {isLoginOpen && (
+        <LoginForm onClose={toggleLogin} onSignUpClick={toggleSignUp} />
+      )}
       {isSignUpOpen && <SignUpForm onClose={toggleSignUp} />}
     </div>
   );
