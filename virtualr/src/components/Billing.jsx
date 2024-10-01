@@ -5,10 +5,9 @@ const Billing = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const packageDetails = location.state?.packageDetails;
-  const [cardNo,setCardNo]=useState(null);
-  const [exDate,setExDate]=useState('');
-  const [cvv,setCvv]=useState(null)
-
+  const [cardNo, setCardNo] = useState(null);
+  const [exDate, setExDate] = useState('');
+  const [cvv, setCvv] = useState(null);
   const [cardType, setCardType] = useState('Visa');
 
   const validation = () => {
@@ -19,56 +18,52 @@ const Billing = () => {
 
     const exDatePattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
     if (!exDatePattern.test(exDate)) {
-      alert('Invalid Expiration Date. Use MM/YY format .');
+      alert('Invalid Expiration Date. Use MM/YY format.');
       return false;
     }
-  
+
     if (cvv.length !== 3 || isNaN(cvv)) {
       alert('Invalid CVV. It must be exactly 3 digits.');
       return false;
     }
-  
+
     return true;
   };
 
-  const handlePayment = (e) => {
+  const handlePayment = async (e) => {
     e.preventDefault();
     if (validation()) {
-      const data={
-        "cardNo":cardNo,
-        "exDate":exDate,
-        "cvv":cvv
-      }
-      // createPackage(data)
-      // .then((response) => {
-      //   console.log(response.data);
-      // })
-      // .catch((error) => {
-      //   console.error(error);
-      // });
-      const formData = new URLSearchParams();
-formData.append('userId', '1');
-formData.append('packageId', '2');
+      const userId = localStorage.getItem('userId');
+      const data = {
+        cardNo: cardNo,
+        exDate: exDate,
+        cvv: cvv,
+        userId: userId,
+        amount: packageDetails?.price,
+        date: new Date().toISOString().split('T')[0]
+      };
 
-fetch('http://localhost:5000/activatePackage/4', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  },
-  body: formData.toString()
-})
-  .then(response => response.json())
-  .then(data => {
-    alert("Success");
-  })
-  .catch(error => {
-    alert('Error:', response.error);
-  });
-      // alert(`Activating ${packageDetails?.title}. Payment processed successfully! ${data}`);
-      alert("Success");
-      handleBack();
+      try {
+        const response = await fetch('http://localhost:5000/makePayment', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          alert(`Activating ${packageDetails?.title}. Payment processed successfully!`);
+          console.log(result);
+        } else {
+          alert('Payment failed. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error processing payment:', error);
+        alert('An error occurred while processing payment.');
+      }
     }
-    
   };
 
   const handleBack = () => {
@@ -121,7 +116,6 @@ fetch('http://localhost:5000/activatePackage/4', {
         <form onSubmit={handlePayment} className="mt-0">
           <div className="mb-4">
             <label className="block text-gray-600 font-medium mb-2">Card Type:</label>
-            
             <div className="border-dashed border-2 border-orange-300 rounded-lg p-4">
               <div className="flex flex-col space-y-4">
                 <label className="flex items-center space-x-4">
@@ -157,7 +151,7 @@ fetch('http://localhost:5000/activatePackage/4', {
               id="cardNumber"
               type="number"
               placeholder="Card Number"
-              onChange={(e)=>setCardNo(e.target.value)}
+              onChange={(e) => setCardNo(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
@@ -170,7 +164,7 @@ fetch('http://localhost:5000/activatePackage/4', {
               id="expiryDate"
               type="text"
               placeholder="MM/YY"
-              onChange={(e)=>setExDate(e.target.value)}
+              onChange={(e) => setExDate(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
@@ -183,7 +177,7 @@ fetch('http://localhost:5000/activatePackage/4', {
               id="cvv"
               type="number"
               placeholder="CVV"
-              onChange={(e)=>setCvv(e.target.value)}
+              onChange={(e) => setCvv(e.target.value)}
               className="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               required
             />
