@@ -5,6 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Billing from "./components/Billing";
 import ImageFF from './assets/sricare.png'; 
 import Notifications from "./components/Notification";
+import PaymentHistory from "./components/PaymentHistory";
+import Profile from "./components/Profile";
 
 const App = () => {
   return (
@@ -30,6 +32,8 @@ const App = () => {
             <Route path="/" element={<HeroSection />} />
             <Route path="/billing" element={<Billing />} />
             <Route path="/Notifications" element={<Notifications />} />
+            <Route path="/PaymentHistory" element={<PaymentHistory />} />
+            <Route path="/Profile" element={<Profile />} />
           </Routes>
         </div>
         <Footer />

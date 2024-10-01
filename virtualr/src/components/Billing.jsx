@@ -40,6 +40,8 @@ const Billing = () => {
         cvv: cvv,
         userId: userId,
         amount: packageDetails?.price,
+        title: packageDetails?.name,
+        description: packageDetails?.description,
         date: new Date().toISOString().split('T')[0]
       };
 
@@ -54,7 +56,7 @@ const Billing = () => {
 
         if (response.ok) {
           const result = await response.json();
-          alert(`Activating ${packageDetails?.title}. Payment processed successfully!`);
+          alert(`Activating ${packageDetails?.name}. Payment processed successfully!`);
           console.log(result);
         } else {
           alert('Payment failed. Please try again.');
@@ -65,7 +67,7 @@ const Billing = () => {
       }
     }
   };
-
+//  mama aluthen dan test.js kiyala file ekak hadala mage tike push kala. Eka hariyata run wenawa okkoma. Oya dan pull karala test.js run karala balanna
   const handleBack = () => {
     navigate(-1);
   };
@@ -110,8 +112,8 @@ const Billing = () => {
         <p className="text-gray-600 mb-2">
           Price: <span className="text-orange-500 font-bold">{packageDetails.price}</span>
         </p>
-        <p className="text-gray-600 mb-2">Data: {packageDetails.data}</p>
-        <p className="text-gray-600 mb-2">Apps: {packageDetails.apps}</p>
+        <p className="text-gray-600 mb-2">Name: {packageDetails.name}</p>
+        <p className="text-gray-600 mb-2">Description: {packageDetails.description}</p>
 
         <form onSubmit={handlePayment} className="mt-0">
           <div className="mb-4">

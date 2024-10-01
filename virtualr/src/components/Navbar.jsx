@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
+const HeaderNav = ({ onLoginClick, onSignUpClick, onProfileClick }) => {
   const weblocation = useLocation();
   const [activeLink, setActiveLink] = useState();
 
@@ -26,6 +26,15 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
     } else {
       window.location.href = link;
     }
+  };
+
+  const token = localStorage.getItem("token");
+  const onLogoutClick = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("role");
+    window.location.reload();
   };
 
   return (
@@ -44,14 +53,6 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
           <Package className="mr-1" />
           <span>Package</span>
         </a>
-        {/* <a 
-          className={`flex items-center text-sm ${activeLink === 'payments' || weblocation.pathname.split('/')[1] === 'payments' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 cursor-pointer`}
-          onClick={() => handleLinkClick('payments')}
-        >
-          <DollarSign className="mr-1" />
-          <span>Payments</span>
-        </a> */}
-
         <a
           className={`flex items-center text-sm ${
             activeLink === "Notifications" ||
@@ -66,6 +67,18 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
         </a>
         <a
           className={`flex items-center text-sm ${
+            activeLink === "PaymentHistory" ||
+            weblocation.pathname.split("/")[1] === "PaymentHistory"
+              ? "text-orange-500"
+              : "text-white"
+          } hover:text-orange-500 cursor-pointer`}
+          onClick={() => handleLinkClick("PaymentHistory")}
+        >
+          <DollarSign className="mr-1" />
+          <span>Payment History</span>
+        </a>
+        <a
+          className={`flex items-center text-sm ${
             activeLink === "settings" ? "text-orange-500" : "text-white"
           } hover:text-orange-500 cursor-pointer`}
           onClick={() => handleLinkClick("settings")}
@@ -75,18 +88,39 @@ const HeaderNav = ({ onLoginClick, onSignUpClick }) => {
         </a>
       </div>
       <div className="flex space-x-4">
-        <button
-          onClick={onLoginClick}
-          className="flex items-center text-orange-500 text-sm cursor-pointer"
-        >
-          <LogIn className="mr-1" />
-        </button>
-        <button
-          onClick={onSignUpClick}
-          className="flex items-center text-orange-500 text-sm cursor-pointer"
-        >
-          <UserPlus className="mr-1" />
-        </button>
+        {!token ? (
+          <>
+            <button
+              onClick={onLoginClick}
+              className="flex items-center text-orange-500 text-sm cursor-pointer"
+            >
+              <LogIn className="mr-1" />
+              
+            </button>
+            <button
+              onClick={onSignUpClick}
+              className="flex items-center text-orange-500 text-sm cursor-pointer"
+            >
+              <UserPlus className="mr-1" />
+              
+            </button>
+          </>
+        ) : (
+          <>
+            <a href="/Profile">
+              <button className="flex items-center text-orange-500 text-sm cursor-pointer border-2 rounded-full p-1 justify-center border-orange-500">
+                <User />
+            
+              </button>
+            </a>
+            <button
+              onClick={onLogoutClick}
+              className="flex items-center text-orange-500 text-sm cursor-pointer"
+            >
+              <LogOut className="mr-1" />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -116,17 +150,17 @@ const LoginForm = ({ onClose, onSignUpClick }) => {
       }
 
       const data = await response.json();
-      console.log("Login successful:", data);
 
       const decodedToken = JSON.parse(atob(data.token.split(".")[1]));
       const userId = decodedToken.userId;
-      console.log("User ID:", userId);
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("userId", userId);
+      localStorage.setItem("role", data.role);
 
       onClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error logging in:", error);
       setError("An error occurred. Please try again.");
